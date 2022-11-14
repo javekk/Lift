@@ -2,10 +2,11 @@ import * as Phaser from 'phaser';
 import PlayScene from './src/scene/PlayScene';
 
 const config = {
-  name: 'app',
+  name: 'Lift',
   type: Phaser.AUTO,
-  width: 800,
-  height: 600,
+  width: 592,
+  height: 768,
+  pixelArt: true,
   scene: [PlayScene],
 };
 

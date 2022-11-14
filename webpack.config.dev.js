@@ -47,7 +47,7 @@ module.exports = {
       patterns: [
         {
           from: path.posix.join(
-            path.resolve(__dirname, 'static').replace(/\\/g, '/'),
+            path.resolve(__dirname, 'assets').replace(/\\/g, '/'),
             '*'
           ),
           to: path.resolve(__dirname, 'build'),
@@ -57,7 +57,7 @@ module.exports = {
   ],
   devServer: {
     static: {
-        directory: path.resolve(__dirname, 'build/static')
+        directory: path.resolve(__dirname, 'build/assets')
       },
     hot: true,
     port: 3000,
