@@ -4,8 +4,8 @@ import PlayScene from './src/scene/PlayScene';
 const config = {
   name: 'Lift',
   type: Phaser.AUTO,
-  width: 592,
-  height: 768,
+  width: 540,
+  height: 720,
   pixelArt: true,
   scene: [PlayScene],
 };
