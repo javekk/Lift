@@ -1,13 +1,21 @@
 import * as Phaser from 'phaser';
+import { Question, Answer } from '../game/Question';
 
 export default class PlayScene extends Phaser.Scene {
-
 
   constructor() {
     super();
     this.pixelscale = 14
     this.scalesprite = 0.8035714
     this.framerate = 8
+    this.currentQuestion = new Question(
+      "Is this the best game ever?",
+      new Set([
+          new Answer("Yes", false),
+          new Answer("No", true)
+        ]
+      )
+    )
   }
 
   preload() {
@@ -21,7 +29,6 @@ export default class PlayScene extends Phaser.Scene {
       frameWidth: 448,
       frameHeight: 448
     });
-
   }
 
 
@@ -67,6 +74,58 @@ export default class PlayScene extends Phaser.Scene {
       .setScale(this.scalesprite)
       .setOrigin(0, 0);
     mrsOak.play('mrsOakidle');
+      
+    // Question
+    this.question = this.add.text(
+      2 * this.pixelscale, 
+      0, 
+      this.currentQuestion.text, 
+      { font: '42px Arial', fill: '#000000' }
+    )
+    .setOrigin(0, 0);
+    // Choices
+    let offset = 4 * this.pixelscale;
+    this.currentQuestion.choices.forEach( choice =>{
+      let choiceText = this.add.text(
+        2 * this.pixelscale, 
+        offset, 
+        choice.text, 
+        { font: '42px Arial', fill: '#000000' }
+      )
+      offset *= 2;
+      choiceText.setInteractive();
+      choiceText.on('clicked', function(){
+        if(choice.isCorrect){
+          this.gameOverText.setText("Yayy, you won");
+        }else{
+          this.gameOverText.setText("I'm very sorry if you think that");
+        }
+      }, this);
+
+      this.input.on('gameobjectup', function (pointer, gameObject){
+          gameObject.emit('clicked', gameObject);
+      }, this);
+    })
+
+
+    // Game over text
+    this.gameOverText = this.add.text(
+        2 * this.pixelscale, 
+        game.config.height / 2, 
+        '', 
+        { font: '42px Arial', fill: '#000000' }
+      )
+      .setOrigin(0, 0);
+  }
+
+  choiceTextHandler(choice){
+    if(choice.isCorrect){
+      //this.gameOverText.setText("Yayy, you won");
+      console.log("Yayy, you won");
+    }else{
+      //this.gameOverText.setText("I'm very sorry if you think that");
+      console.log("I'm very sorry if you think that");
+    }
   }
 
 }
