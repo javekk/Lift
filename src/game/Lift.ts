@@ -1,28 +1,39 @@
 import * as Phaser from 'phaser';
 import {
   Question,
-  Answer
-} from '../game/Question';
-import {
-  Point
-} from '../game/ui/Point';
+  Choice,
+} from './Question';
 
-export default class PlayScene extends Phaser.Scene {
+import { Point } from './ui/Point';
 
-  constructor() {
-    super();
+export default class Lift extends Phaser.Scene{
+
+  pixelscale: number
+  scalesprite: number
+  framerate: number
+
+  questionBox: any
+  questionText: any
+
+  gameOverText: any
+
+  currentQuestion: Question
+
+  constructor(config: Phaser.Types.Core.GameConfig) {
+    super(config);
     this.pixelscale = 14
     this.scalesprite = 0.8035714
     this.framerate = 8
     this.currentQuestion = new Question(
       "Is this the best game \never?",
       new Set([
-        new Answer("Yes", false),
-        new Answer("No", true),
-        new Answer("Maybe", false),
-        new Answer("Game?", false),
-      ])
+        new Choice("Yes", false),
+        new Choice("No", true),
+        new Choice("Maybe", false),
+        new Choice("Game?", false),
+      ]),
     )
+  
   }
 
   preload() {
@@ -53,6 +64,7 @@ export default class PlayScene extends Phaser.Scene {
       .setScale(this.scalesprite);
 
     const mrBafoFrames = [...Array(this.framerate * 5).fill(0)].concat([2])
+    console.log("aaa" + mrBafoFrames)
     this.anims.create({
       key: 'mrBafoIdle',
       frames: this.anims.generateFrameNames('Mr.Bafo', {
@@ -75,7 +87,7 @@ export default class PlayScene extends Phaser.Scene {
     const mrBafo = this.addSprite(
       new Point(
         this.pixelscale * this.scalesprite,
-        game.config.height - (this.asPixel(36) * this.scalesprite)
+        +this.game.config.height - (this.asPixel(36) * this.scalesprite)
       )
     )
     mrBafo.play('mrBafoIdle');
@@ -83,32 +95,30 @@ export default class PlayScene extends Phaser.Scene {
     const mrsOak = this.addSprite(
       new Point(
         this.asPixel(17) * this.scalesprite,
-        game.config.height - (this.asPixel(36) * this.scalesprite),
-      )
+        +this.game.config.height - (this.asPixel(36) * this.scalesprite),
+      ),
     )
     mrsOak.play('mrsOakidle');
 
     // Question
     this.addQuestionAndChoices();
 
-    this.input.on('gameobjectup', function (pointer, gameObject) {
+    this.input.on('gameobjectup', function (pointer: any, gameObject: Phaser.GameObjects.GameObject) {
       gameObject.emit('clicked', gameObject);
     }, this);
     // Game over text
     this.gameOverText = this.add.text(
         this.asPixel(2),
-        game.config.height / 2,
-        '', {
-          font: '42px Arial',
-          fill: '#000000'
-        }
+        +this.game.config.height / 2,
+        '', 
+        { font: '42px Arial' }
       )
       .setOrigin(0, 0);
   }
 
   addQuestionAndChoices() {
     const questionCoordinates = new Point(
-      (game.config.width / 2) + this.asPixel(2),
+      (+this.game.config.width / 2) + this.asPixel(2),
       this.asPixel(1)
     );
     this.questionBox = this.addSprite(questionCoordinates, 'bigFrame');
@@ -123,21 +133,21 @@ export default class PlayScene extends Phaser.Scene {
     this.displayChoice(this.currentQuestion.choices);
   }
 
-  displayChoice(choices) {
+  displayChoice(choices: Set<Choice>) {
     let verticalOffset = this.asPixel(12);
     let isEven = true;
-    choices.forEach(choice => {
+    choices.forEach((choice: Choice) => {
 
       let choiceCoordinates;
       if (isEven) {
         choiceCoordinates = new Point(
-          (game.config.width / 2) + this.asPixel(2),
+          (+this.game.config.width / 2) + this.asPixel(2),
           verticalOffset + this.asPixel(1)
         );
         isEven = !isEven;
       } else {
         choiceCoordinates = new Point(
-          (game.config.width / 2) + this.asPixel(20),
+          (+this.game.config.width / 2) + this.asPixel(20),
           verticalOffset + this.asPixel(1)
         );
         verticalOffset += this.asPixel(8);
@@ -156,7 +166,7 @@ export default class PlayScene extends Phaser.Scene {
     });
   }
 
-  handleChoiceClick(choice) {
+  handleChoiceClick(choice: Choice) {
     return function () {
       if (choice.isCorrect) {
         this.gameOverText.setText("Yayy, you won");
@@ -166,36 +176,40 @@ export default class PlayScene extends Phaser.Scene {
     };
   }
 
-  asPixel(numberOfPixel) {
+  asPixel(numberOfPixel: number) {
     return numberOfPixel * this.pixelscale;
   }
 
-  addSprite(coordinates) {
-    return this.add.sprite(
-        coordinates.x,
-        coordinates.y
-      )
-      .setScale(this.scalesprite)
-      .setOrigin(0, 0);
-  }
 
-  addSprite(coordinates, spriteName) {
-    return this.add.sprite(
+  addSprite(coordinates: Point, spriteName?: string): Phaser.GameObjects.Sprite {
+    let sprite: Phaser.GameObjects.Sprite;
+    if(spriteName != null){
+      sprite = this.add.sprite(
         coordinates.x,
         coordinates.y,
         spriteName
       )
-      .setScale(this.scalesprite)
-      .setOrigin(0, 0);
+    } else {
+      sprite = this.add.sprite(
+        coordinates.x,
+        coordinates.y,
+        'smallFrame' // todo use correct frame
+      ) 
+    }
+    sprite
+    .setScale(this.scalesprite)
+    .setOrigin(0, 0);
+    return sprite;
   }
 
-  addText(coordinates, text) {
+  addText(coordinates: Point, text: string) {
     return this.add.text(
         coordinates.x,
         coordinates.y,
-        text, {
+        text,
+         {
           font: '42px Arial',
-          fill: '#292c33'
+          color: '#292c33'
         }
       )
       .setOrigin(0, 0);

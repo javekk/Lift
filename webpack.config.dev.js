@@ -4,7 +4,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   mode: 'development',
-  entry: './index',
+  entry: './index.ts',
   output: {
     filename: 'main.js',
     path: path.resolve(__dirname, 'build'),
@@ -24,6 +24,14 @@ module.exports = {
         }
       },
       {
+        test: /\.(ts|tsx)?$/,
+        use: {
+          loader: 'ts-loader',
+        },
+        exclude: /node_modules/,
+        include: path.resolve(__dirname, 'src/'),
+      },
+      {
         test: /\.css$/i,
         use: ['style-loader', 'css-loader']
       },
@@ -36,6 +44,9 @@ module.exports = {
         type: 'asset/resource',
       }
     ]
+  },
+  resolve: {
+    extensions: [ '.ts', '.tsx', '.js' ]
   },
   devtool: 'inline-source-map',
   plugins: [
