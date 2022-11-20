@@ -3,6 +3,9 @@ import {
   Question,
   Answer
 } from '../game/Question';
+import {
+  Point
+} from '../game/ui/Point';
 
 export default class PlayScene extends Phaser.Scene {
 
@@ -17,7 +20,7 @@ export default class PlayScene extends Phaser.Scene {
         new Answer("Yes", false),
         new Answer("No", true),
         new Answer("Maybe", false),
-        new Answer("Game?", false)
+        new Answer("Game?", false),
       ])
     )
   }
@@ -34,14 +37,14 @@ export default class PlayScene extends Phaser.Scene {
       frameHeight: 448
     });
 
-    this.load.image('smallFrame', 'assets/smallFrame.png');    
+    this.load.image('smallFrame', 'assets/smallFrame.png');
     this.load.image('bigFrame', 'assets/bigFrame.png');
   }
 
 
   create() {
-    
-    const background = this.add.image(
+
+    this.add.image(
         0,
         0,
         'background'
@@ -69,93 +72,28 @@ export default class PlayScene extends Phaser.Scene {
       repeat: -1,
     });
 
-    // TODO cut the sprites better 
-    const mrBafo =
-      this.add.sprite(
+    const mrBafo = this.addSprite(
+      new Point(
         this.pixelscale * this.scalesprite,
-        game.config.height - (this.asPixel(36) * this.scalesprite),
+        game.config.height - (this.asPixel(36) * this.scalesprite)
       )
-      .setScale(this.scalesprite)
-      .setOrigin(0, 0);
+    )
     mrBafo.play('mrBafoIdle');
 
-    const mrsOak =
-      this.add.sprite(
+    const mrsOak = this.addSprite(
+      new Point(
         this.asPixel(17) * this.scalesprite,
         game.config.height - (this.asPixel(36) * this.scalesprite),
       )
-      .setScale(this.scalesprite)
-      .setOrigin(0, 0);
+    )
     mrsOak.play('mrsOakidle');
 
-
     // Question
-    const questionCoordinates = {
-      width: (game.config.width / 2) + this.asPixel(2),
-      height: this.asPixel(1)
-    }
-    this.questionBox = this.add.image(
-      questionCoordinates.width,
-      questionCoordinates.height,
-      'bigFrame'
-    )
-    .setScale(this.scalesprite)
-    .setOrigin(0, 0);
-    this.questionText = this.add.text(
-        questionCoordinates.width + this.asPixel(2),
-        questionCoordinates.height + this.asPixel(2),
-        this.currentQuestion.text, {
-          font: '42px Arial',
-          fill: '#292c33'
-        }
-      )
-      .setOrigin(0, 0);
-    // Choices
-    let verticalOffset = this.asPixel(12);
-    let isEven = true;
-    
-    this.currentQuestion.choices.forEach(choice => {
+    this.addQuestionAndChoices();
 
-      let choiceCoordinates;
-      if(isEven){
-        choiceCoordinates = {
-          width: (game.config.width / 2) + this.asPixel(2),
-          height: verticalOffset + this.asPixel(1)
-        }
-        isEven = !isEven;
-      }
-      else{
-        choiceCoordinates = {
-          width: (game.config.width / 2) + this.asPixel(20),
-          height: verticalOffset + this.asPixel(1)
-        }
-        verticalOffset += this.asPixel(8);
-        isEven = !isEven;
-      }
-      let choiceBox = this.add.image(
-        choiceCoordinates.width,
-        choiceCoordinates.height,
-        'smallFrame'
-      )
-      .setScale(this.scalesprite)
-      .setOrigin(0, 0);
-      let choiceText = this.add.text(
-        choiceCoordinates.width + this.asPixel(2),
-        choiceCoordinates.height + this.asPixel(2),
-        choice.text, {
-          font: '42px Arial',
-          fill: '#292c33'
-        }
-      )
-      choiceBox.setInteractive();
-      choiceBox.on('clicked', this.handleChoiceClick(choice), this);
-
-      this.input.on('gameobjectup', function (pointer, gameObject) {
-        gameObject.emit('clicked', gameObject);
-      }, this);
-    })
-
-
+    this.input.on('gameobjectup', function (pointer, gameObject) {
+      gameObject.emit('clicked', gameObject);
+    }, this);
     // Game over text
     this.gameOverText = this.add.text(
         this.asPixel(2),
@@ -168,6 +106,56 @@ export default class PlayScene extends Phaser.Scene {
       .setOrigin(0, 0);
   }
 
+  addQuestionAndChoices() {
+    const questionCoordinates = new Point(
+      (game.config.width / 2) + this.asPixel(2),
+      this.asPixel(1)
+    );
+    this.questionBox = this.addSprite(questionCoordinates, 'bigFrame');
+    this.questionText = this.addText(
+      new Point(
+        questionCoordinates.x + this.asPixel(2),
+        questionCoordinates.y + this.asPixel(2),
+      ),
+      this.currentQuestion.text
+    );
+    // Choices
+    this.displayChoice(this.currentQuestion.choices);
+  }
+
+  displayChoice(choices) {
+    let verticalOffset = this.asPixel(12);
+    let isEven = true;
+    choices.forEach(choice => {
+
+      let choiceCoordinates;
+      if (isEven) {
+        choiceCoordinates = new Point(
+          (game.config.width / 2) + this.asPixel(2),
+          verticalOffset + this.asPixel(1)
+        );
+        isEven = !isEven;
+      } else {
+        choiceCoordinates = new Point(
+          (game.config.width / 2) + this.asPixel(20),
+          verticalOffset + this.asPixel(1)
+        );
+        verticalOffset += this.asPixel(8);
+        isEven = !isEven;
+      }
+      let choiceBox = this.addSprite(choiceCoordinates, 'smallFrame');
+      choiceBox.setInteractive();
+      choiceBox.on('clicked', this.handleChoiceClick(choice), this);
+      this.addText(
+        new Point(
+          choiceCoordinates.x + this.asPixel(2),
+          choiceCoordinates.y + this.asPixel(2)
+        ),
+        choice.text
+      );
+    });
+  }
+
   handleChoiceClick(choice) {
     return function () {
       if (choice.isCorrect) {
@@ -178,8 +166,38 @@ export default class PlayScene extends Phaser.Scene {
     };
   }
 
-  asPixel(numberOfPixel){
+  asPixel(numberOfPixel) {
     return numberOfPixel * this.pixelscale;
   }
 
+  addSprite(coordinates) {
+    return this.add.sprite(
+        coordinates.x,
+        coordinates.y
+      )
+      .setScale(this.scalesprite)
+      .setOrigin(0, 0);
+  }
+
+  addSprite(coordinates, spriteName) {
+    return this.add.sprite(
+        coordinates.x,
+        coordinates.y,
+        spriteName
+      )
+      .setScale(this.scalesprite)
+      .setOrigin(0, 0);
+  }
+
+  addText(coordinates, text) {
+    return this.add.text(
+        coordinates.x,
+        coordinates.y,
+        text, {
+          font: '42px Arial',
+          fill: '#292c33'
+        }
+      )
+      .setOrigin(0, 0);
+  }
 }
