@@ -1,10 +1,10 @@
 import * as Phaser from 'phaser';
-import {
-  Question,
-  Choice,
-} from './Question';
-
-import { Point } from './ui/Point';
+import { Question } from './model/Question';
+import { Choice } from './model/Choice';
+import { Point } from './model/ui/Point';
+import { GameEvent } from './model/GameEvent';
+import { StuckInTheElevator} from './event/StuckInTheElevator'
+import { GameStatus } from './model/GameStatus';
 
 export default class Lift extends Phaser.Scene{
 
@@ -17,23 +17,16 @@ export default class Lift extends Phaser.Scene{
 
   gameOverText: any
 
-  currentQuestion: Question
+  currentStatus: GameStatus
+  currentEvent: GameEvent
 
   constructor(config: Phaser.Types.Core.GameConfig) {
     super(config);
-    this.pixelscale = 14
-    this.scalesprite = 0.8035714
-    this.framerate = 8
-    this.currentQuestion = new Question(
-      "Is this the best game \never?",
-      new Set([
-        new Choice("Yes", false),
-        new Choice("No", true),
-        new Choice("Maybe", false),
-        new Choice("Game?", false),
-      ]),
-    )
-  
+    this.pixelscale = 14;
+    this.scalesprite = 0.8035714;
+    this.framerate = 8;
+    this.currentEvent = StuckInTheElevator.getInstance();
+    this.currentStatus = new GameStatus();
   }
 
   preload() {
@@ -127,10 +120,10 @@ export default class Lift extends Phaser.Scene{
         questionCoordinates.x + this.asPixel(2),
         questionCoordinates.y + this.asPixel(2),
       ),
-      this.currentQuestion.text
+      this.currentEvent.question.text
     );
     // Choices
-    this.displayChoice(this.currentQuestion.choices);
+    this.displayChoice(this.currentEvent.question.choices);
   }
 
   displayChoice(choices: Set<Choice>) {
@@ -168,12 +161,10 @@ export default class Lift extends Phaser.Scene{
 
   handleChoiceClick(choice: Choice) {
     return function () {
-      if (choice.isCorrect) {
-        this.gameOverText.setText("Yayy, you won");
-      } else {
-        this.gameOverText.setText("I'm very sorry if you think that");
-      }
-    };
+        this.gameOverText.setText(choice.text);
+        this.currentStatus = this.currentEvent.computeNewGameStatus(choice, this.currentStatus);
+        // TODO get new Event from EventPool
+      };
   }
 
   asPixel(numberOfPixel: number) {
@@ -208,10 +199,11 @@ export default class Lift extends Phaser.Scene{
         coordinates.y,
         text,
          {
-          font: '42px Arial',
+          font: '24px Arial',
           color: '#292c33'
         }
       )
       .setOrigin(0, 0);
   }
+
 }
