@@ -11,6 +11,8 @@ export default class Lift extends Phaser.Scene{
   pixelscale: number
   scalesprite: number
   framerate: number
+  textSizeBig: number
+  textSizeSmall: number
 
   questionBox: any
   questionText: any
@@ -25,6 +27,8 @@ export default class Lift extends Phaser.Scene{
     this.pixelscale = 14;
     this.scalesprite = 0.8035714;
     this.framerate = 8;
+    this.textSizeBig = 24;
+    this.textSizeSmall = 20;
     this.currentEvent = StuckInTheElevator.getInstance();
     this.currentStatus = new GameStatus();
   }
@@ -152,9 +156,10 @@ export default class Lift extends Phaser.Scene{
       this.addText(
         new Point(
           choiceCoordinates.x + this.asPixel(2),
-          choiceCoordinates.y + this.asPixel(2)
+          choiceCoordinates.y + this.asPixel(1)
         ),
-        choice.text
+        choice.text,
+        false,
       );
     });
   }
@@ -193,14 +198,18 @@ export default class Lift extends Phaser.Scene{
     return sprite;
   }
 
-  addText(coordinates: Point, text: string) {
+  addText(coordinates: Point, text: string, isQuestion: boolean = true) {
+    let maxPixelPerRow = isQuestion ? 30: 14;
+    let correctTextSize = isQuestion ? this.textSizeBig : this.textSizeSmall;
+
     return this.add.text(
         coordinates.x,
         coordinates.y,
         text,
          {
-          font: '24px Arial',
-          color: '#292c33'
+          font: correctTextSize + 'px Arial',
+          color: '#292c33',
+          wordWrap: { width: this.asPixel(maxPixelPerRow) } 
         }
       )
       .setOrigin(0, 0);

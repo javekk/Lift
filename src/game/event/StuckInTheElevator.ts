@@ -15,7 +15,7 @@ export class StuckInTheElevator extends GameEvent {
     }
 
     question: Question = new Question(
-        "Hey there, now you are stock in this\nelevator with this very good looking\nwoman!",
+        "Hey there, now you are stock in this elevator with this very good looking woman!",
         new Set([
             new Choice(
                 "Noice!",
@@ -24,7 +24,7 @@ export class StuckInTheElevator extends GameEvent {
                 ),
             ),
             new Choice(
-                "Ouch! I have to go \npeeing",
+                "Ouch! I have to go peeing",
                 new EventOutcome(
                     new ChoiceOutcomeStatus(
                         +1, 0, 0 
@@ -32,7 +32,7 @@ export class StuckInTheElevator extends GameEvent {
                 ),
             ),
             new Choice(
-                "Oh gosh! I'am late\nfor my appointment!",
+                "Oh gosh! I'am late for my appointment!",
                 new EventOutcome(
                     new ChoiceOutcomeStatus(
                         +1, 0, 0 
@@ -40,7 +40,7 @@ export class StuckInTheElevator extends GameEvent {
                 ),
             ),
             new Choice(
-                "I am sure it's going\nto re-start soon!",
+                "I am sure it's going to re-start soon!",
                 new EventOutcome(
                     new ChoiceOutcomeStatus(
                         +1, 0, 0 
