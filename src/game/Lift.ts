@@ -29,8 +29,9 @@ export default class Lift extends Phaser.Scene{
     this.framerate = 8;
     this.textSizeBig = 24;
     this.textSizeSmall = 20;
-    this.currentEvent = StuckInTheElevator.getInstance();
     this.currentStatus = new GameStatus();
+    this.currentEvent = StuckInTheElevator.getInstance();
+    this.currentStatus.occuredEvents.push(this.currentEvent);
   }
 
   preload() {
@@ -111,6 +112,8 @@ export default class Lift extends Phaser.Scene{
         { font: '42px Arial' }
       )
       .setOrigin(0, 0);
+
+    this.currentStatus.logCurrentStatus();
   }
 
   addQuestionAndChoices() {
