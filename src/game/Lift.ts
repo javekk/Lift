@@ -1,14 +1,17 @@
 import * as Phaser from 'phaser';
-import { Question } from './model/Question';
 import { Choice } from './model/Choice';
 import { Point } from './model/ui/Point';
 import { GameEvent } from './model/GameEvent';
-import { StuckInTheElevator} from './event/StuckInTheElevator'
+import { StuckInTheElevator } from './event/StuckInTheElevator'
 import { GameStatus } from './model/GameStatus';
 import { Exit } from './event/app/Exit';
 import { Restart } from './event/app/Restart';
 
-export default class Lift extends Phaser.Scene{
+
+const DESTROY_QUESTION_SPRITE_EVENT = 'destroySprite';
+
+
+export default class Lift extends Phaser.Scene {
 
   pixelscale: number
   scalesprite: number
@@ -16,14 +19,12 @@ export default class Lift extends Phaser.Scene{
   textSizeBig: number
   textSizeSmall: number
 
-  questionBox: any
-  questionText: any
-
   currentStatus: GameStatus
   currentEvent: GameEvent
 
   constructor(config: Phaser.Types.Core.GameConfig) {
     super(config);
+
     this.pixelscale = 14;
     this.scalesprite = 0.8035714;
     this.framerate = 8;
@@ -31,6 +32,7 @@ export default class Lift extends Phaser.Scene{
     this.textSizeSmall = 20;
     this.currentStatus = new GameStatus();
     this.currentEvent = StuckInTheElevator.getInstance();
+
     this.currentStatus.occuredEvents.push(this.currentEvent);
   }
 
@@ -53,15 +55,14 @@ export default class Lift extends Phaser.Scene{
   create() {
 
     this.add.image(
-        0,
-        0,
-        'background'
-      )
+      0,
+      0,
+      'background'
+    )
       .setOrigin(0, 0)
       .setScale(this.scalesprite);
 
     const mrBafoFrames = [...Array(this.framerate * 5).fill(0)].concat([2])
-    console.log("aaa" + mrBafoFrames)
     this.anims.create({
       key: 'mrBafoIdle',
       frames: this.anims.generateFrameNames('Mr.Bafo', {
@@ -100,20 +101,26 @@ export default class Lift extends Phaser.Scene{
     // Question
     this.addQuestionAndChoices();
 
-    this.input.on('gameobjectup', function (pointer: any, gameObject: Phaser.GameObjects.GameObject) {
-      gameObject.emit('clicked', gameObject);
-    }, this);
+    this.input.on(
+      'gameobjectup', 
+      function (pointer: any, gameObject: Phaser.GameObjects.GameObject) {
+          gameObject.emit('clicked', gameObject);
+      }, 
+      this,
+    );
 
     this.currentStatus.logCurrentStatus();
+    console.log(this.currentEvent.question)
   }
 
   addQuestionAndChoices() {
+
     const questionCoordinates = new Point(
       (+this.game.config.width / 2) + this.asPixel(2),
       this.asPixel(1)
     );
-    this.questionBox = this.addSprite(questionCoordinates, 'bigFrame');
-    this.questionText = this.addText(
+    this.currentEvent.question.sprite = this.addSprite(questionCoordinates, 'bigFrame');
+    this.currentEvent.question.textSprite = this.addText(
       new Point(
         questionCoordinates.x + this.asPixel(2),
         questionCoordinates.y + this.asPixel(2),
@@ -122,6 +129,15 @@ export default class Lift extends Phaser.Scene{
     );
     // Choices
     this.displayChoice(this.currentEvent.question.choices);
+
+    // Destroy event
+    this.events.on(
+      DESTROY_QUESTION_SPRITE_EVENT, 
+        function () {
+          this.currentEvent.question.destroySprite(); 
+      }, 
+      this,
+    );
   }
 
   displayChoice(choices: Set<Choice>) {
@@ -147,7 +163,8 @@ export default class Lift extends Phaser.Scene{
       let choiceBox = this.addSprite(choiceCoordinates, 'smallFrame');
       choiceBox.setInteractive();
       choiceBox.on('clicked', this.handleChoiceClick(choice), this);
-      this.addText(
+      choice.sprite = choiceBox;
+      let textSprite = this.addText(
         new Point(
           choiceCoordinates.x + this.asPixel(2),
           choiceCoordinates.y + this.asPixel(1)
@@ -155,17 +172,19 @@ export default class Lift extends Phaser.Scene{
         choice.text,
         false,
       );
+      choice.textSprite = textSprite;
     });
   }
 
   handleChoiceClick(choice: Choice) {
     return function () {
-        this.currentStatus = this.currentEvent.computeNewGameStatus(choice, this.currentStatus);
-        this.handleNewEvent(choice);
-      };
+      this.currentStatus = this.currentEvent.computeNewGameStatus(choice, this.currentStatus);
+      this.handleNewEvent(choice);
+    };
   }
 
   handleNewEvent(choice: Choice) {
+    this.events.emit(DESTROY_QUESTION_SPRITE_EVENT); 
     if (choice.changes.nextEvent != null) {
       if (Exit.isExit(choice.changes.nextEvent))
         this.exitGame();
@@ -186,7 +205,7 @@ export default class Lift extends Phaser.Scene{
 
   addSprite(coordinates: Point, spriteName?: string): Phaser.GameObjects.Sprite {
     let sprite: Phaser.GameObjects.Sprite;
-    if(spriteName != null){
+    if (spriteName != null) {
       sprite = this.add.sprite(
         coordinates.x,
         coordinates.y,
@@ -197,37 +216,39 @@ export default class Lift extends Phaser.Scene{
         coordinates.x,
         coordinates.y,
         'smallFrame' // todo use correct frame
-      ) 
+      )
     }
     sprite
-    .setScale(this.scalesprite)
-    .setOrigin(0, 0);
+      .setScale(this.scalesprite)
+      .setOrigin(0, 0);
     return sprite;
   }
 
   addText(coordinates: Point, text: string, isQuestion: boolean = true) {
-    let maxPixelPerRow = isQuestion ? 30: 14;
+    let maxPixelPerRow = isQuestion ? 30 : 14;
     let correctTextSize = isQuestion ? this.textSizeBig : this.textSizeSmall;
 
-    return this.add.text(
-        coordinates.x,
-        coordinates.y,
-        text,
-         {
-          font: correctTextSize + 'px Arial',
-          color: '#292c33',
-          wordWrap: { width: this.asPixel(maxPixelPerRow) } 
-        }
-      )
+    let textObj: Phaser.GameObjects.Text;
+    textObj = this.add.text(
+      coordinates.x,
+      coordinates.y,
+      text,
+      {
+        font: correctTextSize + 'px Arial',
+        color: '#292c33',
+        wordWrap: { width: this.asPixel(maxPixelPerRow) }
+      }
+    )
       .setOrigin(0, 0);
+    return textObj;
   }
 
-  exitGame(){
+  exitGame() {
     // TODO
     console.log("Exit Game Called");
   }
 
-  restartGame(){
+  restartGame() {
     // TODO
     console.log("Restart Game Called");
   }
