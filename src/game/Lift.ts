@@ -5,6 +5,8 @@ import { Point } from './model/ui/Point';
 import { GameEvent } from './model/GameEvent';
 import { StuckInTheElevator} from './event/StuckInTheElevator'
 import { GameStatus } from './model/GameStatus';
+import { Exit } from './event/app/Exit';
+import { Restart } from './event/app/Restart';
 
 export default class Lift extends Phaser.Scene{
 
@@ -16,8 +18,6 @@ export default class Lift extends Phaser.Scene{
 
   questionBox: any
   questionText: any
-
-  gameOverText: any
 
   currentStatus: GameStatus
   currentEvent: GameEvent
@@ -49,7 +49,6 @@ export default class Lift extends Phaser.Scene{
     this.load.image('smallFrame', 'assets/smallFrame.png');
     this.load.image('bigFrame', 'assets/bigFrame.png');
   }
-
 
   create() {
 
@@ -104,14 +103,6 @@ export default class Lift extends Phaser.Scene{
     this.input.on('gameobjectup', function (pointer: any, gameObject: Phaser.GameObjects.GameObject) {
       gameObject.emit('clicked', gameObject);
     }, this);
-    // Game over text
-    this.gameOverText = this.add.text(
-        this.asPixel(2),
-        +this.game.config.height / 2,
-        '', 
-        { font: '42px Arial' }
-      )
-      .setOrigin(0, 0);
 
     this.currentStatus.logCurrentStatus();
   }
@@ -169,16 +160,29 @@ export default class Lift extends Phaser.Scene{
 
   handleChoiceClick(choice: Choice) {
     return function () {
-        this.gameOverText.setText(choice.text);
         this.currentStatus = this.currentEvent.computeNewGameStatus(choice, this.currentStatus);
-        // TODO get new Event from EventPool
+        this.handleNewEvent(choice);
       };
+  }
+
+  handleNewEvent(choice: Choice) {
+    if (choice.changes.nextEvent != null) {
+      if (Exit.isExit(choice.changes.nextEvent))
+        this.exitGame();
+      else if (Restart.isRestart(choice.changes.nextEvent))
+        this.restartGame();
+      else
+        this.currentEvent = choice.changes.nextEvent;
+    }
+    else {
+      // TODO get new Event from EventPool
+    }
+    this.addQuestionAndChoices();
   }
 
   asPixel(numberOfPixel: number) {
     return numberOfPixel * this.pixelscale;
   }
-
 
   addSprite(coordinates: Point, spriteName?: string): Phaser.GameObjects.Sprite {
     let sprite: Phaser.GameObjects.Sprite;
@@ -218,4 +222,13 @@ export default class Lift extends Phaser.Scene{
       .setOrigin(0, 0);
   }
 
+  exitGame(){
+    // TODO
+    console.log("Exit Game Called");
+  }
+
+  restartGame(){
+    // TODO
+    console.log("Restart Game Called");
+  }
 }

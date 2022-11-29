@@ -1,6 +1,5 @@
-import { GameObject } from "./GameObject";
 
-export class ChoiceOutcomeStatus {
+export class GameStatusVariation {
     public constructor(
         public anxietyVariation: number = 0,
         public floorVariation: number = 0,

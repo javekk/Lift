@@ -1,8 +1,9 @@
 import { Choice } from "../model/Choice";
-import { ChoiceOutcomeStatus } from "../model/ChoiceOutcomeStatus";
+import { GameStatusVariation } from "../model/ChoiceOutcomeStatus";
 import { EventOutcome } from "../model/EventOutcome";
 import { GameEvent } from "../model/GameEvent";
 import { Question } from "../model/Question";
+import { ExitTheElevator } from "./ExitTheElevator";
 
 
 
@@ -20,13 +21,15 @@ export class StuckInTheElevator extends GameEvent {
             new Choice(
                 "Noice!",
                 new EventOutcome(
-                    new ChoiceOutcomeStatus(),
+                    null,
+                    null,
+                    ExitTheElevator.getInstance(),
                 ),
             ),
             new Choice(
                 "Ouch! I have to go peeing",
                 new EventOutcome(
-                    new ChoiceOutcomeStatus(
+                    new GameStatusVariation(
                         +1, 0, 0 
                     ),
                 ),
@@ -34,7 +37,7 @@ export class StuckInTheElevator extends GameEvent {
             new Choice(
                 "Oh gosh! I'am late for my appointment!",
                 new EventOutcome(
-                    new ChoiceOutcomeStatus(
+                    new GameStatusVariation(
                         +1, 0, 0 
                     ),
                 ),
@@ -42,14 +45,14 @@ export class StuckInTheElevator extends GameEvent {
             new Choice(
                 "I am sure it's going to re-start soon!",
                 new EventOutcome(
-                    new ChoiceOutcomeStatus(
+                    new GameStatusVariation(
                         +1, 0, 0 
                     ),
                 ),
             )
         ])
     )
-    isRepetable: Boolean;
+    isRepetable: Boolean = false;
 
     static getInstance() {
         if (!StuckInTheElevator.instance) {

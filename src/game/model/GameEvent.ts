@@ -1,5 +1,5 @@
 import { Choice } from "./Choice";
-import { ChoiceOutcomeStatus } from "./ChoiceOutcomeStatus";
+import { GameStatusVariation } from "./ChoiceOutcomeStatus";
 import { GameStatus } from "./GameStatus";
 import { Question } from "./Question";
 
@@ -18,13 +18,13 @@ export abstract class GameEvent {
         previousGameStaus: GameStatus,
     ): GameStatus{
         let newGameStatus = previousGameStaus;
-        if(choice.changes.choiceOutcomeStatus != null){
-            newGameStatus.anxiety += choice.changes.choiceOutcomeStatus.anxietyVariation;
-            newGameStatus.floor += choice.changes.choiceOutcomeStatus.floorVariation;
-            newGameStatus.airLevel += choice.changes.choiceOutcomeStatus.airLevelVariation;
+        if(choice.changes.gameStatusVariation != null){
+            newGameStatus.anxiety += choice.changes.gameStatusVariation.anxietyVariation;
+            newGameStatus.floor += choice.changes.gameStatusVariation.floorVariation;
+            newGameStatus.airLevel += choice.changes.gameStatusVariation.airLevelVariation;
         }
-        if(choice.changes.gameObject != null){
-            newGameStatus.inventory.add(choice.changes.gameObject)
+        if(choice.changes.newGameObject != null){
+            newGameStatus.inventory.add(choice.changes.newGameObject)
         }
         newGameStatus.occuredEvents.push(this);
         newGameStatus.logCurrentStatus();
