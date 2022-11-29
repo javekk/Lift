@@ -26,7 +26,7 @@ export abstract class GameEvent {
         if(choice.changes.newGameObject != null){
             newGameStatus.inventory.add(choice.changes.newGameObject)
         }
-        newGameStatus.occuredEvents.push(this);
+        newGameStatus.pastEvents.push(this);
         newGameStatus.logCurrentStatus();
         return newGameStatus;
     }

@@ -1,5 +1,5 @@
-import { GameEvent } from "./GameEvent";
-import { GameObject } from "./GameObject";
+import { GameEvent } from './GameEvent';
+import { GameObject } from './GameObject';
 
 export class GameStatus {
     public constructor(
@@ -7,26 +7,27 @@ export class GameStatus {
         public floor: number = 22,
         public airLevel: number = 1,
         public inventory: Set<GameObject> = new Set(),
-        public occuredEvents: Array<GameEvent> = new Array(),
+        public pastEvents: Array<GameEvent> = new Array(),
     ) { }
 
 
     logCurrentStatus() {
-        console.log("Status: \n");
-        console.log("\tAnxiety: " + this.anxiety);
-        console.log("\tFloor: " + this.floor);
-        console.log("\tAirLevel: " + this.airLevel);
+        const invetoryTxt: string = (this.inventory.size > 0) ?
+            '[\n\t' + Array.from(this.inventory).map(obj => obj.name + '\n').join(',\n\t')  + '\t\n]' :
+            '[]';
 
-        console.log("\tInventory: [");
-        Array.from(this.inventory).map(obj => {
-            console.log("\t\t" + obj.name + "\n")
-        });
-        console.log("\t]");
+        const eventsTxt: string = (this.pastEvents.length > 0) ?
+            '[\n\t' + Array.from(this.pastEvents).map(obj => obj.constructor.name).join(',\n\t') + '\t\n]' :
+            '[]'
 
-        console.log("\tPast Events: [");
-        Array.from(this.occuredEvents).map(obj => {
-            console.log("\t\t" + obj.constructor.name + "\n")
-        });
-        console.log("\t]");
+        const statusTxt: string = [
+        'Status:', 
+            `Anxiety: ${this.anxiety}`,
+            `Floor: ${this.floor}`,
+            `AirLevel: ${this.airLevel}`,
+            `Inventory: ${invetoryTxt}`,
+            `Past Events: ${eventsTxt}`,
+        ].join('\n');
+        console.log(statusTxt);
     }
 }

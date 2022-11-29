@@ -33,7 +33,7 @@ export default class Lift extends Phaser.Scene {
     this.currentStatus = new GameStatus();
     this.currentEvent = StuckInTheElevator.getInstance();
 
-    this.currentStatus.occuredEvents.push(this.currentEvent);
+    this.currentStatus.pastEvents.push(this.currentEvent);
   }
 
   preload() {
