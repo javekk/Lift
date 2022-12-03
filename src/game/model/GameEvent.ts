@@ -30,4 +30,9 @@ export abstract class GameEvent {
         newGameStatus.logCurrentStatus();
         return newGameStatus;
     }
+
+    logCurrentEvent() {
+        const statusTxt: string = `Current event: ${this.constructor.name}`
+        console.log(statusTxt);
+    }
 }

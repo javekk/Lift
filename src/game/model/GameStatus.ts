@@ -13,20 +13,20 @@ export class GameStatus {
 
     logCurrentStatus() {
         const invetoryTxt: string = (this.inventory.size > 0) ?
-            '[\n\t' + Array.from(this.inventory).map(obj => obj.name + '\n').join(',\n\t')  + '\t\n]' :
+            '[\n\t' + Array.from(this.inventory).map(obj => obj.name + '\n').join(',\n\t')  + '\t\t\n]' :
             '[]';
 
         const eventsTxt: string = (this.pastEvents.length > 0) ?
-            '[\n\t' + Array.from(this.pastEvents).map(obj => obj.constructor.name).join(',\n\t') + '\t\n]' :
+            '[\n\t' + Array.from(this.pastEvents).map(obj => obj.constructor.name).join(',\n\t') + '\t\t\n]' :
             '[]'
 
         const statusTxt: string = [
         'Status:', 
-            `Anxiety: ${this.anxiety}`,
-            `Floor: ${this.floor}`,
-            `AirLevel: ${this.airLevel}`,
-            `Inventory: ${invetoryTxt}`,
-            `Past Events: ${eventsTxt}`,
+        `   Anxiety: ${this.anxiety}`,
+        `   Floor: ${this.floor}`,
+        `   AirLevel: ${this.airLevel}`,
+        `   Inventory: ${invetoryTxt}`,
+        `   Past Events: ${eventsTxt}`,
         ].join('\n');
         console.log(statusTxt);
     }

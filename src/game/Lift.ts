@@ -32,8 +32,6 @@ export default class Lift extends Phaser.Scene {
     this.textSizeSmall = 20;
     this.currentStatus = new GameStatus();
     this.currentEvent = StuckInTheElevator.getInstance();
-
-    this.currentStatus.pastEvents.push(this.currentEvent);
   }
 
   preload() {
@@ -110,7 +108,7 @@ export default class Lift extends Phaser.Scene {
     );
 
     this.currentStatus.logCurrentStatus();
-    console.log(this.currentEvent.question)
+    this.currentEvent.logCurrentEvent();
   }
 
   addQuestionAndChoices() {
@@ -196,6 +194,7 @@ export default class Lift extends Phaser.Scene {
     else {
       // TODO get new Event from EventPool
     }
+    this.currentEvent.logCurrentEvent();
     this.addQuestionAndChoices();
   }
 
@@ -215,7 +214,7 @@ export default class Lift extends Phaser.Scene {
       sprite = this.add.sprite(
         coordinates.x,
         coordinates.y,
-        'smallFrame' // todo use correct frame
+        'smallFrame' // TODO use correct frame
       )
     }
     sprite
