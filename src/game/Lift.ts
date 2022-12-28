@@ -208,13 +208,13 @@ export default class Lift extends Phaser.Scene {
       sprite = this.add.sprite(
         coordinates.x,
         coordinates.y,
-        spriteName
+        spriteName,
       )
     } else {
       sprite = this.add.sprite(
         coordinates.x,
         coordinates.y,
-        'smallFrame' // TODO use correct frame
+        'smallFrame', // TODO use correct frame
       )
     }
     sprite

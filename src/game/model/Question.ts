@@ -14,10 +14,7 @@ export class Question {
     destroySprite(){
         this.sprite.destroy();
         this.textSprite.destroy();
-        Array.from(this.choices).map(choice => {
-            choice.sprite.destroy();
-            choice.textSprite.destroy();
-        });
+        this.choices.forEach(choice => { choice.destroySprite() });
     }
 
     getRandomQuestionText(): string {

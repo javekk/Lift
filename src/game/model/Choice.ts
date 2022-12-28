@@ -7,4 +7,12 @@ export class Choice {
         public text: string,
         public changes: EventOutcome,
     ){}
+
+    destroySprite(){
+
+        if(this.sprite && this.textSprite){
+            this.sprite.destroy();
+            this.textSprite.destroy();
+        }
+    }
 }
