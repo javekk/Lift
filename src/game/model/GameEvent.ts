@@ -1,5 +1,4 @@
 import { Choice } from "./Choice";
-import { GameStatusVariation } from "./ChoiceOutcomeStatus";
 import { GameStatus } from "./GameStatus";
 import { Question } from "./Question";
 

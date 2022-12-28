@@ -123,10 +123,10 @@ export default class Lift extends Phaser.Scene {
         questionCoordinates.x + this.asPixel(2),
         questionCoordinates.y + this.asPixel(2),
       ),
-      this.currentEvent.question.text
+      this.currentEvent.question.getRandomQuestionText(),
     );
     // Choices
-    this.displayChoice(this.currentEvent.question.choices);
+    this.displayChoice(this.currentEvent.question.getRandomFourChoices());
 
     // Destroy event
     this.events.on(
@@ -138,7 +138,7 @@ export default class Lift extends Phaser.Scene {
     );
   }
 
-  displayChoice(choices: Set<Choice>) {
+  displayChoice(choices: Array<Choice>) {
     let verticalOffset = this.asPixel(12);
     let isEven = true;
     choices.forEach((choice: Choice) => {

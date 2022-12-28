@@ -15,30 +15,53 @@ export class StuckInTheElevator extends GameEvent {
         super();
     }
 
+    isRepetable: Boolean = false;
+
     question: Question = new Question(
-        "Hey there, now you are stock in this elevator with this very good looking woman!",
-        new Set([
+        new Array(
+            "Hey there, now you are stock in this elevator with this very good looking woman!",
+            "Oh gosh, it seems like the elevator has stopped!",
+            "Niceee, the elevator has stopped working....",
+        ),
+        new Array(
             new Choice(
                 "Noice!",
                 new EventOutcome(
-                    null,
-                    null,
+                    null, // No changes
+                    null, // No event objects
                     ExitTheElevator.getInstance(),
                 ),
             ),
             new Choice(
-                "Ouch! I have to go peeing",
+                "Ouch! I have to go peeing!",
                 new EventOutcome(
                     new GameStatusVariation(
-                        +1, 0, 0 
+                        +1, // anxietyVar
+                        0 , // floorVar
+                        0 , // airLevelVar
+                        +1, // cringeVar
                     ),
                 ),
             ),
             new Choice(
-                "Oh gosh! I'am late for my appointment!",
+                "Ouch! I have the restroom!",
                 new EventOutcome(
                     new GameStatusVariation(
-                        +1, 0, 0 
+                        +1, // anxietyVar
+                        0 , // floorVar
+                        -1, // airLevelVar
+                        +1, // cringeVar
+                    ),
+                ),
+            ),
+            new Choice(
+                "Oh gosh! I'm late for my appointment!",
+                new EventOutcome(
+                    new GameStatusVariation(
+                        +1, // anxietyVar
+                        0 , // floorVar 
+                        0 , // airLevelVar
+                        0 , // cringeVar
                     ),
                 ),
             ),
@@ -46,13 +69,26 @@ export class StuckInTheElevator extends GameEvent {
                 "I am sure it's going to re-start soon!",
                 new EventOutcome(
                     new GameStatusVariation(
-                        +1, 0, 0 
+                        0 , // anxietyVar
+                        0 , // floorVar
+                        0 , // airLevelVar
+                        0 , // cringeVar
                     ),
                 ),
-            )
-        ])
+            ),
+            new Choice(
+                "Today it's not a good day",
+                new EventOutcome(
+                    new GameStatusVariation(
+                        0 , // anxietyVar
+                        0 , // floorVar
+                        0 , // airLevelVar
+                        0 , // cringeVar
+                    ),
+                ),
+            ),
+        ),
     )
-    isRepetable: Boolean = false;
 
     static getInstance() {
         if (!StuckInTheElevator.instance) {

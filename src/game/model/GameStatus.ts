@@ -4,6 +4,7 @@ import { GameObject } from './GameObject';
 export class GameStatus {
     public constructor(
         public anxiety: number = 0,
+        public cringe: number = 1,
         public floor: number = 22,
         public airLevel: number = 1,
         public inventory: Set<GameObject> = new Set(),

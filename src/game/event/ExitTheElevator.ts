@@ -1,5 +1,4 @@
 import { Choice } from "../model/Choice";
-import { GameStatusVariation } from "../model/ChoiceOutcomeStatus";
 import { EventOutcome } from "../model/EventOutcome";
 import { GameEvent } from "../model/GameEvent";
 import { Question } from "../model/Question";
@@ -15,9 +14,13 @@ export class ExitTheElevator extends GameEvent {
         super();
     }
 
+    isRepetable: Boolean = false;
+
     question: Question = new Question(
-        "You finally free, gg!",
-        new Set([
+        new Array(
+            "You finally free, gg!"
+        ),
+        new Array(
             new Choice(
                 "Try another time!",
                 new EventOutcome(
@@ -34,9 +37,8 @@ export class ExitTheElevator extends GameEvent {
                     new Exit(),
                 ),
             ),
-        ])
+        )
     )
-    isRepetable: Boolean = false;
 
     static getInstance() {
         if (!ExitTheElevator.instance) {
