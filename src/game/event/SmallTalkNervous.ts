@@ -16,43 +16,64 @@ export class SmallTalk1 extends GameEvent {
         super();
     }
 
+    matchCondition(gameStatus: GameStatus): Boolean {
+        return gameStatus.cringe > 3 || gameStatus.anxiety > 3;
+    }
+
     question: Question = new Question(
         new Array(
-            "So, what your plan now, are you going to say something or what?"
+            "Nervousness is perceived, what's your plan man?",
+            "Nervous vibes are perceived, what should we do?",
         ),
         new Array(
             new Choice(
-                "Yes, I am going to talk about the weather!",
+                "Push the button for the first floor repetetly and see what happen",
                 new EventOutcome(
                     new GameStatusVariation(
-                        0, 0, 0, 0 
+                        +1, -1, 0, 0 
                     ),
                 ),
             ),
             new Choice(
-                "Better not to say anything!",
+                "Oh man! I don't know",
                 new EventOutcome(
                     new GameStatusVariation(
-                        +1, 0, 0, +1
+                        +1, 0, -1, +1
                     ),
                 ),
             ),
             new Choice(
-                "Can't too nervous for speaking with girl!",
+                "The weather, usually it works!",
                 new EventOutcome(
                     new GameStatusVariation(
-                        +1, 0, -1, +1 
+                        -1, 0, -1, -1 
                     ),
                 ),
             ),
             new Choice(
-                "Sure maybe I can talk about my clinbing classes..",
+                "I like Satan",
                 new EventOutcome(
                     new GameStatusVariation(
-                        -1, 0, 0, +1
+                        +4, 0, -1, +4
                     ),
                 ),
-            )
+            ),
+            new Choice(
+                "I like Satan",
+                new EventOutcome(
+                    new GameStatusVariation(
+                        +4, 0, -1, +4
+                    ),
+                ),
+            ),
+            new Choice(
+                "Push random buttons and see what happen",
+                new EventOutcome(
+                    new GameStatusVariation(
+                        +2, +1, -1, 0 
+                    ),
+                ),
+            ),
         )
     )
 
@@ -61,11 +82,5 @@ export class SmallTalk1 extends GameEvent {
             SmallTalk1.instance = new SmallTalk1();
         }
         return SmallTalk1.instance;
-    }
-
-    matchCondition(gameStatus: GameStatus): Boolean {
-        return gameStatus.cringe < 5 
-            && gameStatus.anxiety < 5 
-            && gameStatus.airLevel > 1;
     }
 }
