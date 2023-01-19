@@ -6,6 +6,13 @@
       "target": "es5",
       "jsx": "react",
       "allowJs": true,
-      "moduleResolution": "node"
-    }
+      "moduleResolution": "node",
+      "composite": true,
+      "esModuleInterop": true,
+    },
+    "exclude": [
+      "./tests/",
+      "./node_modules/",
+      "./dist/"
+    ],
   }
