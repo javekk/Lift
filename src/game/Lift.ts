@@ -6,6 +6,7 @@ import { StuckInTheElevator } from './event/StuckInTheElevator'
 import { GameStatus } from './model/GameStatus';
 import { Exit } from './event/app/Exit';
 import { Restart } from './event/app/Restart';
+import { EventPool } from './service/EventPool';
 
 
 const DESTROY_QUESTION_SPRITE_EVENT = 'destroySprite';
@@ -21,6 +22,7 @@ export default class Lift extends Phaser.Scene {
 
   currentStatus: GameStatus
   currentEvent: GameEvent
+  eventPull: EventPool
 
   constructor(config: Phaser.Types.Core.GameConfig) {
     super(config);
@@ -32,6 +34,7 @@ export default class Lift extends Phaser.Scene {
     this.textSizeSmall = 20;
     this.currentStatus = new GameStatus();
     this.currentEvent = StuckInTheElevator.getInstance();
+    this.eventPull = new EventPool();
   }
 
   preload() {
@@ -192,7 +195,7 @@ export default class Lift extends Phaser.Scene {
         this.currentEvent = choice.changes.nextEvent;
     }
     else {
-      // TODO get new Event from EventPool
+      this.currentEvent = this.eventPull.getRandomEventBaseOnGameStatus(this.currentStatus);
     }
     this.currentEvent.logCurrentEvent();
     this.addQuestionAndChoices();

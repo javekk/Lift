@@ -6,9 +6,9 @@ import { GameStatus } from "../model/GameStatus";
 import { Question } from "../model/Question";
 
 
-export class SmallTalk1 extends GameEvent {
+export class SmallTalkNervous extends GameEvent {
 
-    private static instance: SmallTalk1;
+    private static instance: SmallTalkNervous;
 
     isRepetable: Boolean = true;
 
@@ -78,9 +78,9 @@ export class SmallTalk1 extends GameEvent {
     )
 
     static getInstance() {
-        if (!SmallTalk1.instance) {
-            SmallTalk1.instance = new SmallTalk1();
+        if (!SmallTalkNervous.instance) {
+            SmallTalkNervous.instance = new SmallTalkNervous();
         }
-        return SmallTalk1.instance;
+        return SmallTalkNervous.instance;
     }
 }
