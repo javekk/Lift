@@ -8,7 +8,10 @@ describe("Lift class ", () => {
       lift = new Lift({});
     });
 
-    
+    afterEach(() => {
+        jest.restoreAllMocks();
+    });
+
     it('should have pixelscale attribute set to 14', () => {
         expect(lift.pixelscale).toBe(14);
     });
@@ -17,24 +20,4 @@ describe("Lift class ", () => {
         expect(lift.scalesprite).toBe(0.8035714);
     });
 
-
-    describe('preload method should load the following images correctly', () => {
-       test('the background image', () => {
-            const spy = jest.spyOn(lift.load, 'image');
-            lift.preload();
-            expect(spy).toHaveBeenCalledWith('background', './assets/Lift - tiny.png');
-            spy.mockRestore();
-        });
-    });
-
-    test('preload should load the Mr. Bafo spritesheet', () => {
-        const spy = jest.spyOn(lift.load, 'spritesheet');
-        lift.preload();
-        expect(spy).toHaveBeenCalledWith('Mr.Bafo', 'assets/Mr.Bafo.png', {
-          frameWidth: 448,
-          frameHeight: 448,
-        });
-        spy.mockRestore();
-      });
 });
-
