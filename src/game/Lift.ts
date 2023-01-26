@@ -7,6 +7,7 @@ import { GameStatus } from './model/GameStatus';
 import { Exit } from './event/app/Exit';
 import { Restart } from './event/app/Restart';
 import { EventPool } from './service/EventPool';
+import { SpriteManager } from './model/ui/SpriteManager';
 
 
 const DESTROY_QUESTION_SPRITE_EVENT = 'destroySprite';
@@ -24,6 +25,8 @@ export default class Lift extends Phaser.Scene {
   currentEvent: GameEvent
   eventPool: EventPool
 
+  spriteManager: SpriteManager
+
   constructor(config: Phaser.Types.Core.GameConfig) {
     super(config);
 
@@ -35,22 +38,11 @@ export default class Lift extends Phaser.Scene {
     this.currentStatus = new GameStatus();
     this.currentEvent = StuckInTheElevator.getInstance();
     this.eventPool = new EventPool();
+    this.spriteManager = new SpriteManager(this);
   }
 
   preload() {
-    this.load.image('background', './assets/Lift - tiny.png');
-
-    this.load.spritesheet('Mr.Bafo', 'assets/Mr.Bafo.png', {
-      frameWidth: 448,
-      frameHeight: 448,
-    });
-    this.load.spritesheet('Mrs.Oak', 'assets/Mrs.Oak.png', {
-      frameWidth: 448,
-      frameHeight: 448
-    });
-
-    this.load.image('smallFrame', 'assets/smallFrame.png');
-    this.load.image('bigFrame', 'assets/bigFrame.png');
+    this.spriteManager.loadSprites();
   }
 
   create() {
