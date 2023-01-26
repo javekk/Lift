@@ -22,7 +22,7 @@ export default class Lift extends Phaser.Scene {
 
   currentStatus: GameStatus
   currentEvent: GameEvent
-  eventPull: EventPool
+  eventPool: EventPool
 
   constructor(config: Phaser.Types.Core.GameConfig) {
     super(config);
@@ -34,7 +34,7 @@ export default class Lift extends Phaser.Scene {
     this.textSizeSmall = 20;
     this.currentStatus = new GameStatus();
     this.currentEvent = StuckInTheElevator.getInstance();
-    this.eventPull = new EventPool();
+    this.eventPool = new EventPool();
   }
 
   preload() {
@@ -55,51 +55,10 @@ export default class Lift extends Phaser.Scene {
 
   create() {
 
-    this.add.image(
-      0,
-      0,
-      'background'
-    )
-      .setOrigin(0, 0)
-      .setScale(this.scalesprite);
+    this.createBackground();
+    this.createMrBafo();
+    this.createMrsOak();
 
-    const mrBafoFrames = [...Array(this.framerate * 5).fill(0)].concat([2])
-    this.anims.create({
-      key: 'mrBafoIdle',
-      frames: this.anims.generateFrameNames('Mr.Bafo', {
-        frames: mrBafoFrames
-      }),
-      frameRate: this.framerate,
-      repeat: -1,
-    });
-
-    const mrsOakFrames = [...Array(this.framerate * 4).fill(0)].concat([1])
-    this.anims.create({
-      key: 'mrsOakidle',
-      frames: this.anims.generateFrameNumbers('Mrs.Oak', {
-        frames: mrsOakFrames
-      }),
-      frameRate: this.framerate,
-      repeat: -1,
-    });
-
-    const mrBafo = this.addSprite(
-      new Point(
-        this.pixelscale * this.scalesprite,
-        +this.game.config.height - (this.asPixel(36) * this.scalesprite)
-      )
-    )
-    mrBafo.play('mrBafoIdle');
-
-    const mrsOak = this.addSprite(
-      new Point(
-        this.asPixel(17) * this.scalesprite,
-        +this.game.config.height - (this.asPixel(36) * this.scalesprite),
-      ),
-    )
-    mrsOak.play('mrsOakidle');
-
-    // Question
     this.addQuestionAndChoices();
 
     this.input.on(
@@ -114,7 +73,55 @@ export default class Lift extends Phaser.Scene {
     this.currentEvent.logCurrentEvent();
   }
 
-  addQuestionAndChoices() {
+  private createBackground() {
+    this.add.image(
+      0,
+      0,
+      'background'
+    )
+      .setOrigin(0, 0)
+      .setScale(this.scalesprite);
+  }
+
+  private createMrBafo() {
+    const mrBafoFrames = [...Array(this.framerate * 5).fill(0)].concat([2]);
+    this.anims.create({
+      key: 'mrBafoIdle',
+      frames: this.anims.generateFrameNames('Mr.Bafo', {
+        frames: mrBafoFrames
+      }),
+      frameRate: this.framerate,
+      repeat: -1,
+    });
+    const mrBafo = this.addSprite(
+      new Point(
+        this.pixelscale * this.scalesprite,
+        +this.game.config.height - (this.asPixel(36) * this.scalesprite)
+      )
+    )
+    mrBafo.play('mrBafoIdle');
+  }
+
+  private createMrsOak() {
+    const mrsOakFrames = [...Array(this.framerate * 4).fill(0)].concat([1]);
+    this.anims.create({
+      key: 'mrsOakidle',
+      frames: this.anims.generateFrameNumbers('Mrs.Oak', {
+        frames: mrsOakFrames
+      }),
+      frameRate: this.framerate,
+      repeat: -1,
+    });
+    const mrsOak = this.addSprite(
+      new Point(
+        this.asPixel(17) * this.scalesprite,
+        +this.game.config.height - (this.asPixel(36) * this.scalesprite),
+      ),
+    )
+    mrsOak.play('mrsOakidle');
+  }  
+
+  private addQuestionAndChoices() {
 
     const questionCoordinates = new Point(
       (+this.game.config.width / 2) + this.asPixel(2),
@@ -128,10 +135,8 @@ export default class Lift extends Phaser.Scene {
       ),
       this.currentEvent.question.getRandomQuestionText(),
     );
-    // Choices
     this.displayChoice(this.currentEvent.question.getRandomFourChoices());
 
-    // Destroy event
     this.events.on(
       DESTROY_QUESTION_SPRITE_EVENT, 
         function () {
@@ -141,7 +146,7 @@ export default class Lift extends Phaser.Scene {
     );
   }
 
-  displayChoice(choices: Array<Choice>) {
+  private displayChoice(choices: Array<Choice>) {
     let verticalOffset = this.asPixel(12);
     let isEven = true;
     choices.forEach((choice: Choice) => {
@@ -177,35 +182,31 @@ export default class Lift extends Phaser.Scene {
     });
   }
 
-  handleChoiceClick(choice: Choice) {
+  private handleChoiceClick(choice: Choice) {
     return function () {
       this.currentStatus = this.currentEvent.computeNewGameStatus(choice, this.currentStatus);
       this.handleNewEvent(choice);
     };
   }
 
-  handleNewEvent(choice: Choice) {
+  private handleNewEvent(choice: Choice) {
     this.events.emit(DESTROY_QUESTION_SPRITE_EVENT); 
-    if (choice.changes.nextEvent != null) {
-      if (Exit.isExit(choice.changes.nextEvent))
-        this.exitGame();
-      else if (Restart.isRestart(choice.changes.nextEvent))
-        this.restartGame();
-      else
-        this.currentEvent = choice.changes.nextEvent;
-    }
-    else {
-      this.currentEvent = this.eventPull.getRandomEventBaseOnGameStatus(this.currentStatus);
-    }
+    const nextEvent = this.eventPool.getNextEvent(choice, this.currentStatus);
+    if (Exit.isExit(nextEvent))
+      this.exitGame();
+    else if (Restart.isRestart(nextEvent))
+      this.restartGame();
+    else
+      this.currentEvent = nextEvent;
     this.currentEvent.logCurrentEvent();
     this.addQuestionAndChoices();
   }
 
-  asPixel(numberOfPixel: number) {
+  private asPixel(numberOfPixel: number) {
     return numberOfPixel * this.pixelscale;
   }
 
-  addSprite(coordinates: Point, spriteName?: string): Phaser.GameObjects.Sprite {
+  private addSprite(coordinates: Point, spriteName?: string): Phaser.GameObjects.Sprite {
     let sprite: Phaser.GameObjects.Sprite;
     if (spriteName != null) {
       sprite = this.add.sprite(
@@ -226,7 +227,7 @@ export default class Lift extends Phaser.Scene {
     return sprite;
   }
 
-  addText(coordinates: Point, text: string, isQuestion: boolean = true) {
+  private addText(coordinates: Point, text: string, isQuestion: boolean = true) {
     let maxPixelPerRow = isQuestion ? 30 : 14;
     let correctTextSize = isQuestion ? this.textSizeBig : this.textSizeSmall;
 
@@ -245,12 +246,12 @@ export default class Lift extends Phaser.Scene {
     return textObj;
   }
 
-  exitGame() {
+  private exitGame() {
     // TODO
     console.log("Exit Game Called");
   }
 
-  restartGame() {
+  private restartGame() {
     // TODO
     console.log("Restart Game Called");
   }

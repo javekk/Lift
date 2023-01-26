@@ -2,12 +2,11 @@ import { ExitTheElevator } from "../event/ExitTheElevator";
 import { SmallTalkNervous } from "../event/SmallTalkNervous";
 import { SmallTalkQuiet } from "../event/SmallTalkQuiet";
 import { StuckInTheElevator } from "../event/StuckInTheElevator";
+import { Choice } from "../model/Choice";
 import { GameEvent } from "../model/GameEvent";
 import { GameStatus } from "../model/GameStatus";
 
 export class EventPool {
-
-    private MAX_NUMBER_OF_RETRY_TO_GET_AN_EVENT_BEFORE_THROW: number = 10;
 
     private events: Array<GameEvent> 
 
@@ -23,10 +22,21 @@ export class EventPool {
         this.events.push(SmallTalkQuiet.getInstance());
     }
 
-
-    public getRandomEventBaseOnGameStatus(
+    public getNextEvent(
+        choice: Choice,
         currentGameStaus: GameStatus,
-    ){
+    ): GameEvent{
+        if (choice.changes.nextEvent != null) {
+            return choice.changes.nextEvent;
+        }
+        else {
+            return this.getRandomEventBaseOnGameStatus(currentGameStaus);
+        }
+    }
+
+    private getRandomEventBaseOnGameStatus(
+        currentGameStaus: GameStatus,
+    ): GameEvent {
         let oldValues = new Set<number>([]);
         while(oldValues.size < this.events.length){
             var randomNumber = Math.floor(Math.random() * this.events.length);
