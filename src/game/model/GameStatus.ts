@@ -1,12 +1,13 @@
+import { Range } from '../type/Range';
 import { GameEvent } from './GameEvent';
 import { GameObject } from './GameObject';
 
 export class GameStatus {
     public constructor(
-        public anxiety: number = 0,
-        public cringe: number = 1,
-        public floor: number = 22,
-        public airLevel: number = 5,
+        public anxiety: Range<0, 5> = 0,
+        public cringe: Range<0, 10> = 1,
+        public floor: Range<0, 17> = 16,
+        public airLevel: Range<0, 10> = 9,
         public inventory: Set<GameObject> = new Set(),
         public pastEvents: Array<GameEvent> = new Array(),
     ) { }

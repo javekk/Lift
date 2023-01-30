@@ -17,7 +17,7 @@ export class SmallTalkNervous extends GameEvent {
     }
 
     matchCondition(gameStatus: GameStatus): Boolean {
-        return gameStatus.cringe > 3 || gameStatus.anxiety > 3;
+        return gameStatus.cringe > 5 || gameStatus.anxiety > 5;
     }
 
     question: Question = new Question(
@@ -59,7 +59,7 @@ export class SmallTalkNervous extends GameEvent {
                 ),
             ),
             new Choice(
-                "I like Satan",
+                "I really like Satan",
                 new EventOutcome(
                     new GameStatusVariation(
                         +4, 0, -1, +4

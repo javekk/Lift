@@ -6,9 +6,9 @@ import { GameStatus } from "../model/GameStatus";
 import { Question } from "../model/Question";
 
 
-export class SmallTalkQuiet extends GameEvent {
+export class SmallTalkTense extends GameEvent {
 
-    private static instance: SmallTalkQuiet;
+    private static instance: SmallTalkTense;
 
     isRepetable: Boolean = true;
 
@@ -17,9 +17,8 @@ export class SmallTalkQuiet extends GameEvent {
     }
 
     matchCondition(gameStatus: GameStatus): Boolean {
-        return gameStatus.cringe < 3 
-            && gameStatus.anxiety < 3 
-            && gameStatus.airLevel >= 1;
+        return (gameStatus.cringe > 3 && gameStatus.cringe < 5)
+            || (gameStatus.anxiety > 3 && gameStatus.anxiety < 5);
     }
 
     question: Question = new Question(
@@ -73,10 +72,10 @@ export class SmallTalkQuiet extends GameEvent {
     )
 
     static getInstance() {
-        if (!SmallTalkQuiet.instance) {
-            SmallTalkQuiet.instance = new SmallTalkQuiet();
+        if (!SmallTalkTense.instance) {
+            SmallTalkTense.instance = new SmallTalkTense();
         }
-        return SmallTalkQuiet.instance;
+        return SmallTalkTense.instance;
     }
 
 }

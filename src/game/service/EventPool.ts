@@ -1,6 +1,7 @@
 import { ExitTheElevator } from "../event/ExitTheElevator";
 import { SmallTalkNervous } from "../event/SmallTalkNervous";
 import { SmallTalkQuiet } from "../event/SmallTalkQuiet";
+import { SmallTalkTense } from "../event/SmallTalkTense";
 import { StuckInTheElevator } from "../event/StuckInTheElevator";
 import { Choice } from "../model/Choice";
 import { GameEvent } from "../model/GameEvent";
@@ -19,7 +20,8 @@ export class EventPool {
 
         this.events = new Array(
             SmallTalkNervous.getInstance(),
-            SmallTalkQuiet.getInstance()
+            SmallTalkTense.getInstance(),
+            SmallTalkQuiet.getInstance(),
         );
     }
 
