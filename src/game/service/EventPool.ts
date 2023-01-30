@@ -17,9 +17,10 @@ export class EventPool {
         this.stuckInTheElevator = StuckInTheElevator.getInstance();
         this.exitTheElevator = ExitTheElevator.getInstance();
 
-        this.events = new Array<GameEvent>;
-        this.events.push(SmallTalkNervous.getInstance());
-        this.events.push(SmallTalkQuiet.getInstance());
+        this.events = new Array(
+            SmallTalkNervous.getInstance(),
+            SmallTalkQuiet.getInstance()
+        );
     }
 
     public getNextEvent(

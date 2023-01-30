@@ -1,6 +1,5 @@
 import * as Phaser from 'phaser';
 import { Choice } from './model/Choice';
-import { Point } from './model/ui/Point';
 import { GameEvent } from './model/GameEvent';
 import { StuckInTheElevator } from './event/StuckInTheElevator'
 import { GameStatus } from './model/GameStatus';
@@ -16,9 +15,6 @@ const DESTROY_QUESTION_SPRITE_EVENT = 'destroySprite';
 
 export default class Lift extends Phaser.Scene {
 
-  textSizeBig: number
-  textSizeSmall: number
-
   currentStatus: GameStatus
   currentEvent: GameEvent
   eventPool: EventPool
@@ -29,8 +25,6 @@ export default class Lift extends Phaser.Scene {
   constructor(config: Phaser.Types.Core.GameConfig) {
     super(config);
 
-    this.textSizeBig = 24;
-    this.textSizeSmall = 20;
     this.currentStatus = new GameStatus();
     this.currentEvent = StuckInTheElevator.getInstance();
     this.eventPool = new EventPool();
@@ -39,6 +33,7 @@ export default class Lift extends Phaser.Scene {
   }
 
   preload() {
+    this.spriteManager.init();
     this.spriteManager.loadSprites();
   }
 
@@ -59,18 +54,7 @@ export default class Lift extends Phaser.Scene {
 
   private addQuestionAndChoices() {
 
-    const questionCoordinates = new Point(
-      (+this.game.config.width / 2) + this.asPixel(2),
-      this.asPixel(1)
-    );
-    this.currentEvent.question.sprite = this.spriteManager.addSprite(questionCoordinates, 'bigFrame');
-    this.currentEvent.question.textSprite = this.addText(
-      new Point(
-        questionCoordinates.x + this.asPixel(2),
-        questionCoordinates.y + this.asPixel(2),
-      ),
-      this.currentEvent.question.getRandomQuestionText(),
-    );
+    this.spriteManager.addQuestion(this.currentEvent);
     this.displayChoices(this.currentEvent.question.getRandomFourChoices());
 
     this.events.on(
@@ -83,38 +67,10 @@ export default class Lift extends Phaser.Scene {
   }
 
   private displayChoices(choices: Array<Choice>) {
-    let verticalOffset = this.asPixel(12);
-    let isEven = true;
-    choices.forEach((choice: Choice) => {
-
-      let choiceCoordinates;
-      if (isEven) {
-        choiceCoordinates = new Point(
-          (+this.game.config.width / 2) + this.asPixel(2),
-          verticalOffset + this.asPixel(1)
-        );
-        isEven = !isEven;
-      } else {
-        choiceCoordinates = new Point(
-          (+this.game.config.width / 2) + this.asPixel(20),
-          verticalOffset + this.asPixel(1)
-        );
-        verticalOffset += this.asPixel(8);
-        isEven = !isEven;
-      }
-      let choiceBox = this.spriteManager.addSprite(choiceCoordinates, 'smallFrame');
+    choices.forEach((choice: Choice, index: number) => {
+      let choiceBox = this.spriteManager.addChoice(choice, index);
       choiceBox.setInteractive();
       choiceBox.on('clicked', this.handleChoiceClick(choice), this);
-      choice.sprite = choiceBox;
-      let textSprite = this.addText(
-        new Point(
-          choiceCoordinates.x + this.asPixel(2),
-          choiceCoordinates.y + this.asPixel(1)
-        ),
-        choice.text,
-        false,
-      );
-      choice.textSprite = textSprite;
     });
   }
 
@@ -138,28 +94,6 @@ export default class Lift extends Phaser.Scene {
     this.addQuestionAndChoices();
   }
 
-  private asPixel(numberOfPixel: number) {
-    return this.uiManager.asPixel(numberOfPixel);
-  }
-
-  private addText(coordinates: Point, text: string, isQuestion: boolean = true) {
-    let maxPixelPerRow = isQuestion ? 30 : 14;
-    let correctTextSize = isQuestion ? this.textSizeBig : this.textSizeSmall;
-
-    let textObj: Phaser.GameObjects.Text;
-    textObj = this.add.text(
-      coordinates.x,
-      coordinates.y,
-      text,
-      {
-        font: correctTextSize + 'px Arial',
-        color: '#292c33',
-        wordWrap: { width: this.asPixel(maxPixelPerRow) }
-      }
-    )
-      .setOrigin(0, 0);
-    return textObj;
-  }
 
   private exitGame() {
     // TODO
