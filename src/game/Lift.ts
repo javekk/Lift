@@ -71,7 +71,7 @@ export default class Lift extends Phaser.Scene {
       ),
       this.currentEvent.question.getRandomQuestionText(),
     );
-    this.displayChoice(this.currentEvent.question.getRandomFourChoices());
+    this.displayChoices(this.currentEvent.question.getRandomFourChoices());
 
     this.events.on(
       DESTROY_QUESTION_SPRITE_EVENT, 
@@ -82,7 +82,7 @@ export default class Lift extends Phaser.Scene {
     );
   }
 
-  private displayChoice(choices: Array<Choice>) {
+  private displayChoices(choices: Array<Choice>) {
     let verticalOffset = this.asPixel(12);
     let isEven = true;
     choices.forEach((choice: Choice) => {

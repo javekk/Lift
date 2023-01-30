@@ -5,13 +5,15 @@ export class SpriteManager {
 
   private scalesprite: number
   private framerate: number
+  private sprites: Map<string, Phaser.GameObjects.Sprite>
 
   constructor(
-    public scene: Phaser.Scene,
-    public uiManager: UIManager,
+    private scene: Phaser.Scene,
+    private uiManager: UIManager,
   ) {
     this.scalesprite = 0.8035714;
     this.framerate = 8;
+    this.sprites = new Map();
   }
 
   public loadSprites() {
@@ -33,6 +35,10 @@ export class SpriteManager {
     this.createBackground();
     this.createMrBafo();
     this.createMrsOak();
+  }
+
+  public getSprite(spriteName: string): Phaser.GameObjects.Sprite {
+    return this.sprites.get(spriteName);
   }
 
   private createBackground() {
