@@ -17,8 +17,8 @@ export class SmallTalkTense extends GameEvent {
     }
 
     matchCondition(gameStatus: GameStatus): Boolean {
-        return (gameStatus.cringe > 3 && gameStatus.cringe < 5)
-            || (gameStatus.anxiety > 3 && gameStatus.anxiety < 5);
+        return (gameStatus.cringe >= 3 && gameStatus.cringe < 5)
+            || (gameStatus.anxiety >= 3 && gameStatus.anxiety < 5);
     }
 
     question: Question = new Question(
