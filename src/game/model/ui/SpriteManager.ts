@@ -61,6 +61,10 @@ export class SpriteManager {
 
     this.scene.load.image('smallFrame', 'assets/smallFrame.png');
     this.scene.load.image('bigFrame', 'assets/bigFrame.png');
+
+    this.scene.load.image('inventory', 'assets/Inventory.png');    
+    this.scene.load.image('separator', 'assets/Separator.png');
+
   }
 
 
@@ -68,6 +72,8 @@ export class SpriteManager {
     this.createBackground();
     this.createMrBafo();
     this.createMrsOak();
+    this.createInventory();
+    this.createSeparator();
   }
 
   private createBackground() {
@@ -117,32 +123,9 @@ export class SpriteManager {
   }
 
 
-  public addSprite(coordinates: Point, spriteName?: string): Phaser.GameObjects.Sprite {
-    let sprite: Phaser.GameObjects.Sprite;
-    if (spriteName != null) {
-      sprite = this.scene.add.sprite(
-        coordinates.x,
-        coordinates.y,
-        spriteName,
-      )
-    } else {
-      sprite = this.scene.add.sprite(
-        coordinates.x,
-        coordinates.y,
-        'smallFrame', // TODO use correct frame
-      )
-    }
-    sprite
-      .setScale(this.scalesprite)
-      .setOrigin(0, 0);
-    return sprite;
-  }
-
-
   public getSprite(spriteName: string): Phaser.GameObjects.Sprite {
     return this.sprites.get(spriteName);
   }  
-
 
   public addQuestion(currentEvent: GameEvent){
     const questionCoordinates = new Point(
@@ -192,6 +175,45 @@ export class SpriteManager {
     )
       .setOrigin(0, 0);
     return textObj;
+  }
+
+  private createSeparator() {
+    const separatorCoordinates = new Point(
+      (+this.scene.game.config.width / 2) + this.asPixel(2),
+      +this.scene.game.config.height - this.asPixel(24) ,
+    );
+    const separator = this.addSprite(separatorCoordinates, 'separator');
+    this.sprites.set('separator', separator);
+  }
+
+  private createInventory() {
+    const inventoryCoordinates = new Point(
+      (+this.scene.game.config.width / 2) + this.asPixel(2),
+      +this.scene.game.config.height - this.asPixel(4 + 10) ,
+    );
+    const inventory = this.addSprite(inventoryCoordinates, 'inventory');
+    this.sprites.set('inventory', inventory);
+  }
+
+  public addSprite(coordinates: Point, spriteName?: string): Phaser.GameObjects.Sprite {
+    let sprite: Phaser.GameObjects.Sprite;
+    if (spriteName != null) {
+      sprite = this.scene.add.sprite(
+        coordinates.x,
+        coordinates.y,
+        spriteName,
+      )
+    } else {
+      sprite = this.scene.add.sprite(
+        coordinates.x,
+        coordinates.y,
+        'smallFrame', // TODO use correct frame
+      )
+    }
+    sprite
+      .setScale(this.scalesprite)
+      .setOrigin(0, 0);
+    return sprite;
   }
 
 
