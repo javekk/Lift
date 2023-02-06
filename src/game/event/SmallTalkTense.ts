@@ -87,10 +87,11 @@ export class SmallTalkTense extends GameEvent {
             ),
             new Choice(                
                 "I'll try to keep the conversation light and avoid any serious topics.",
-                    new EventOutcome(
-                        new GameStatusVariation(
+                new EventOutcome(
+                    new GameStatusVariation(
                         0, 0, 0, 0
-                ),
+                    ),
+                )
             ),
         )
     )
