@@ -1,5 +1,5 @@
 import { Choice } from "../model/Choice";
-import { GameStatusVariation } from "../model/ChoiceOutcomeStatus";
+import { GameStatusVariation } from "../model/ChoiceStatusVariation";
 import { EventOutcome } from "../model/EventOutcome";
 import { GameEvent } from "../model/GameEvent";
 import { Question } from "../model/Question";

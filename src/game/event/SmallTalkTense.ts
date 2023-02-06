@@ -1,5 +1,5 @@
 import { Choice } from "../model/Choice";
-import { GameStatusVariation } from "../model/ChoiceOutcomeStatus";
+import { GameStatusVariation } from "../model/ChoiceStatusVariation";
 import { EventOutcome } from "../model/EventOutcome";
 import { GameEvent } from "../model/GameEvent";
 import { GameStatus } from "../model/GameStatus";
@@ -26,6 +26,7 @@ export class SmallTalkTense extends GameEvent {
             "So, what your plan now, are you going to say something or what?",
             "In the meanwhile you could say somenthing.....",
             "Maybe you can say something...",
+            "You're not making this situation any better by staying silent. Speak up now."
         ),
         new Array(
             new Choice(
@@ -61,11 +62,34 @@ export class SmallTalkTense extends GameEvent {
                 ),
             ),
             new Choice(
-                "I may talk about baird-watching, my fellow birdwacthers always say that girls like it..",
+                "I'll try to start a conversation and see where it goes.",
                 new EventOutcome(
                     new GameStatusVariation(
-                        0, 0, 0, +3
+                        -1, 0, 0, -1
                     ),
+                ),
+            ),
+            new Choice(
+                "I'll break the silence with a joke to lighten the mood.",
+                new EventOutcome(
+                    new GameStatusVariation(
+                        -1, 0, 0, +1
+                    ),
+                ),
+            ),
+            new Choice( 
+                "Maybe I could bring up a common interest to find common ground.",
+                new EventOutcome(
+                    new GameStatusVariation(
+                        -1, 0, 0, -1        
+                    ),
+                ),
+            ),
+            new Choice(                
+                "I'll try to keep the conversation light and avoid any serious topics.",
+                    new EventOutcome(
+                        new GameStatusVariation(
+                        0, 0, 0, 0
                 ),
             ),
         )

@@ -1,4 +1,4 @@
-import { GameStatusVariation } from "./ChoiceOutcomeStatus";
+import { GameStatusVariation } from "./ChoiceStatusVariation";
 import { GameEvent } from "./GameEvent";
 import { GameObject } from "./GameObject";
 
